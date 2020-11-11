@@ -13,8 +13,9 @@ using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Iovanesc_Roxana_Lab5;
 using Iovanesc_Roxana_Lab5.Models;
+using Microsoft.OpenApi.Models;
 
-    namespace Iovanesc_Roxana_Lab5
+namespace Iovanesc_Roxana_Lab5
 {
     public class Startup
     {
@@ -32,22 +33,41 @@ using Iovanesc_Roxana_Lab5.Models;
             opt.UseInMemoryDatabase("ExpenseList"));
 
             services.AddControllers();
+            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Expenses API",
+                    Description = "A simple example ASP.NET Core Web API",
+                    TermsOfService = new Uri("https://econ.ubbcluj.ro/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Iovanesc Roxana",
+                        Email = string.Empty,
+                        Url = new Uri("https://econ.ubbcluj.ro/cv.php?id=540"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://econ.ubbcluj.ro/licence"),
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            app.UseSwagger();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseHttpsRedirection();
-
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Expenses API v1.1");
+            });
             app.UseRouting();
-
-            app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
@@ -55,3 +75,5 @@ using Iovanesc_Roxana_Lab5.Models;
         }
     }
 }
+    
+
